@@ -1,9 +1,9 @@
 import pandas as pd 
 from matplotlib import pyplot as plt
 from matplotlib import style
-from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
-
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
 
 #######################################################################
 ### Loading the Dataset
@@ -34,9 +34,6 @@ nd_dataset = dataset.drop(['Cabin'], axis=1)
 # Assign mean to the Age column NA values
 nd_dataset['Age'] = nd_dataset['Age'].fillna(nd_dataset['Age'].mean())
 
-# Drop all the NA values
-nd_dataset = nd_dataset.dropna()
-
 
 # Convert Strings to numbers
 l = []
@@ -46,7 +43,7 @@ for i in nd_dataset['Sex']:
 	elif i == "female":
 		l.append(1.)
 	else:
-		print "Error", i
+		l.append(i)
 nd_dataset['Sex_n'] = pd.Series(l)
 
 l = []
@@ -58,14 +55,18 @@ for i in nd_dataset['Embarked']:
 	elif i == "Q":
 		l.append(2.)
 	else:
-		print "Error", i
+		l.append(i)
 nd_dataset['Embarked_n'] = pd.Series(l)
+
+
+# Drop all the NA values
+nd_dataset = nd_dataset.dropna()
 
 
 # Modify the actual dataset
 dataset = nd_dataset
 
-
+'''
 #######################################################################
 ### Visualizing Data
 surv_data = dataset[dataset['Survived'] == 1]
@@ -95,9 +96,9 @@ plt.yticks(size=8)
 plt.title('Died', size=10)
 
 plt.show()
-
-
 '''
+
+
 #######################################################################
 ### Train-test Split
 
@@ -112,4 +113,3 @@ X_train, X_val, y_train, y_val = \
 clf = GaussianNB()
 clf.fit(X_train, y_train)
 print clf.score(X_val, y_val)
-'''
