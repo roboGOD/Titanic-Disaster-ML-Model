@@ -114,7 +114,7 @@ X_train, X_val, y_train, y_val = \
 
 
 ### Classification Model
-clf = RandomForestClassifier(n_estimators = 55)
+clf = SVC(kernel='rbf', C=500, gamma=0.0006)
 clf.fit(X_train, y_train)
 print "Training Set Score:", clf.score(X_train, y_train)
 print "Validation Set Score:", clf.score(X_val, y_val)
