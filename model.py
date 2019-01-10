@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier as DTClassifier
 
 #######################################################################
 ### Loading the Dataset
@@ -111,6 +112,7 @@ X_train, X_val, y_train, y_val = \
 
 
 ### Classification Model
-clf = AdaBoostClassifier(n_estimators = 25)
+clf = DTClassifier(min_samples_split = 25)
 clf.fit(X_train, y_train)
-print clf.score(X_val, y_val)
+print "Training Set Score:", clf.score(X_train, y_train)
+print "Validation Set Score:", clf.score(X_val, y_val)
