@@ -4,6 +4,7 @@ from matplotlib import style
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
+from sklearn.ensemble import AdaBoostClassifier
 
 #######################################################################
 ### Loading the Dataset
@@ -102,7 +103,7 @@ plt.show()
 #######################################################################
 ### Train-test Split
 
-feature_list = ['Fare', 'Pclass', 'Sex_n', 'Age', 'Embarked_n', 'SibSp', 'Parch']
+feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n']
 labels = dataset['Survived'].values
 
 X_train, X_val, y_train, y_val = \
@@ -110,6 +111,6 @@ X_train, X_val, y_train, y_val = \
 
 
 ### Classification Model
-clf = GaussianNB()
+clf = AdaBoostClassifier(n_estimators = 25)
 clf.fit(X_train, y_train)
 print clf.score(X_val, y_val)
