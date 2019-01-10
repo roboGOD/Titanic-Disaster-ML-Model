@@ -1,11 +1,13 @@
 import pandas as pd 
 from matplotlib import pyplot as plt
 from matplotlib import style
+
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier as DTClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 #######################################################################
 ### Loading the Dataset
@@ -112,7 +114,7 @@ X_train, X_val, y_train, y_val = \
 
 
 ### Classification Model
-clf = DTClassifier(min_samples_split = 25)
+clf = RandomForestClassifier(n_estimators = 55)
 clf.fit(X_train, y_train)
 print "Training Set Score:", clf.score(X_train, y_train)
 print "Validation Set Score:", clf.score(X_val, y_val)
