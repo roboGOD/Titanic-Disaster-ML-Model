@@ -1,6 +1,6 @@
 import pandas as pd
 
-def preprocess(dataset, feature_list, return_labels=False):
+def preprocess(dataset, feature_list, test_set=True):
 	# Drop the Cabin Column
 	dataset = dataset.drop(['Cabin'], axis=1)
 
@@ -31,15 +31,17 @@ def preprocess(dataset, feature_list, return_labels=False):
 			l.append(i)
 	dataset['Embarked_n'] = pd.Series(l)
 
+	if not test_set:
+		# Drop all the NA values
+		dataset = dataset.dropna()
 
-	# Drop all the NA values
-	dataset = dataset.dropna()
-
-	if return_labels:
 		features = dataset[feature_list].values
 		labels = dataset['Survived'].values
 		return features, labels
 	else:
+		# Fill NA values with 0.
+		dataset = dataset.fillna(0.)
+
 		features = dataset[feature_list].values
 		return features
 

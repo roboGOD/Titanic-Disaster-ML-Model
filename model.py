@@ -24,7 +24,7 @@ dataset = pd.read_csv('dataset/train.csv')
 
 ### Preprocess the data
 feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n']
-features, labels = preprocess(dataset, feature_list, return_labels=True)
+features, labels = preprocess(dataset, feature_list, test_set=False)
 
 
 ### Visualizing Data
@@ -46,8 +46,24 @@ clf = DTClassifier(min_samples_split=27)
 
 ### Cross Validation of Model
 
-test_classifier(clf, features, labels)
+#test_classifier(clf, features, labels)
 
+
+############################################################################
+### Make predictions
+
+test_set = pd.read_csv('dataset/test.csv')
+test_features = preprocess(test_set, feature_list)
+
+clf.fit(features, labels)
+predictions = clf.predict(test_features)
+
+output_df = pd.DataFrame()
+output_df['PassengerId'] = test_set['PassengerId']
+output_df['Survived'] = pd.Series(predictions)
+
+with open('dataset/DTC_out.csv', 'w') as output_csv:
+	output_df.to_csv(output_csv, sep=',', index=False)
 
 
 
