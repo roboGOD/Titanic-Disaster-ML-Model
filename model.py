@@ -1,6 +1,4 @@
 import pandas as pd 
-from matplotlib import pyplot as plt
-from matplotlib import style
 
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -9,179 +7,44 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier as DTClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-from sklearn.model_selection import StratifiedShuffleSplit
+from preprocess import preprocess
+from visualize import visualize
+from tester import test_classifier
+
 
 #######################################################################
+### Given Columns
+''' 
+PassengerId, Pclass, Name, Sex, Age, SibSp, Parch, Ticket, Fare, Cabin, Embarked, Survived
+'''
+
 ### Loading the Dataset
 dataset = pd.read_csv('dataset/train.csv')
 
-### Given Columns
-''' 
-PassengerId
-Pclass
-Name
-Sex
-Age
-SibSp
-Parch
-Ticket
-Fare
-Cabin
-Embarked
-Survived
-'''
 
-#######################################################################
 ### Preprocess the data
-
-# Drop the Cabin Column
-nd_dataset = dataset.drop(['Cabin'], axis=1)
-
-# Assign mean to the Age column NA values
-nd_dataset['Age'] = nd_dataset['Age'].fillna(nd_dataset['Age'].mean())
-
-
-# Convert Strings to numbers
-l = []
-for i in nd_dataset['Sex']:
-	if i == "male":
-		l.append(0.)
-	elif i == "female":
-		l.append(1.)
-	else:
-		l.append(i)
-nd_dataset['Sex_n'] = pd.Series(l)
-
-l = []
-for i in nd_dataset['Embarked']:
-	if i == "S":
-		l.append(0.)
-	elif i == "C":
-		l.append(1.)
-	elif i == "Q":
-		l.append(2.)
-	else:
-		l.append(i)
-nd_dataset['Embarked_n'] = pd.Series(l)
-
-
-# Drop all the NA values
-nd_dataset = nd_dataset.dropna()
-
-
-# Modify the actual dataset
-dataset = nd_dataset
-
-'''
-#######################################################################
-### Visualizing Data
-surv_data = dataset[dataset['Survived'] == 1]
-died_data = dataset[dataset['Survived'] == 0]
-
-style.use('fivethirtyeight')
-#plt.scatter(surv_data['PassengerId'].values, surv_data['Age'].values, label='Survived', color='g')
-#plt.scatter(died_data['PassengerId'].values, died_data['Age'].values, label='Died', color='r')
-
-#plt.hist(surv_data['Fare'], label='Survived', color='g')
-#plt.hist(died_data['Fare'], label='Died', color='r')
-
-plt.subplot(1,2,1)
-plt.hist(surv_data['Age'], label='Survived', color='g')
-plt.xlabel('Age', size=10)
-plt.ylabel('Frequency', size=10)
-plt.xticks(size=8)
-plt.yticks(size=8)
-plt.title('Survived', size=10)
-
-plt.subplot(1,2,2)
-plt.hist(died_data['Age'], label='Died', color='r')
-plt.xlabel('Age', size=10)
-plt.ylabel('Frequency', size=10)
-plt.xticks(size=8)
-plt.yticks(size=8)
-plt.title('Died', size=10)
-
-plt.show()
-'''
-
-
-#######################################################################
-### Train-test Split
-
 feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n']
-features = dataset[feature_list].values
-labels = dataset['Survived'].values
+features, labels = preprocess(dataset, feature_list, return_labels=True)
 
-X_train, X_val, y_train, y_val = \
-		train_test_split(features, labels, test_size=0.2, random_state=42)
+
+### Visualizing Data
+# visualize(dataset)
 
 
 ### Classification Model
 clf = DTClassifier(min_samples_split=27)
-#clf.fit(X_train, y_train)
-#print "Training Set Score:", clf.score(X_train, y_train)
-#print "Validation Set Score:", clf.score(X_val, y_val)
 
-#######################################################################
+
+### Train-Test Split
+# X_train, X_val, y_train, y_val = \
+# 		train_test_split(features, labels, test_size=0.2, random_state=42)
+
+# clf.fit(X_train, y_train)
+# print "Training Set Score:", clf.score(X_train, y_train)
+# print "Validation Set Score:", clf.score(X_val, y_val)
+
+
 ### Cross Validation of Model
-
-def test_classifier(clf, features, labels, folds=1000):
-
-	PERF_FORMAT_STRING = "\
-	\nAccuracy: {:>0.{display_precision}f}\nPrecision: {:>0.{display_precision}f}\n\
-Recall: {:>0.{display_precision}f}\nF1: {:>0.{display_precision}f}\nF2: {:>0.{display_precision}f}"
-	RESULTS_FORMAT_STRING = "\nTotal predictions: {:4d}\nTrue positives: {:4d}\nFalse positives: {:4d}\n\
-False negatives: {:4d}\nTrue negatives: {:4d}"
-
-	cv = StratifiedShuffleSplit(n_splits=folds, random_state = 42)
-	true_negatives = 0
-	false_negatives = 0
-	true_positives = 0
-	false_positives = 0
-	for train_idx, test_idx in cv.split(features, labels): 
-	    features_train = []
-	    features_test  = []
-	    labels_train   = []
-	    labels_test    = []
-	    for ii in train_idx:
-	        features_train.append( features[ii] )
-	        labels_train.append( labels[ii] )
-	    for jj in test_idx:
-	        features_test.append( features[jj] )
-	        labels_test.append( labels[jj] )
-	    
-	    ### fit the classifier using training set, and test on test set
-	    clf.fit(features_train, labels_train)
-	    predictions = clf.predict(features_test)
-	    for prediction, truth in zip(predictions, labels_test):
-	        if prediction == 0 and truth == 0:
-	            true_negatives += 1
-	        elif prediction == 0 and truth == 1:
-	            false_negatives += 1
-	        elif prediction == 1 and truth == 0:
-	            false_positives += 1
-	        elif prediction == 1 and truth == 1:
-	            true_positives += 1
-	        else:
-	            print "Warning: Found a predicted label not == 0 or 1."
-	            print "All predictions should take value 0 or 1."
-	            print "Evaluating performance for processed predictions:"
-	            break
-	try:
-	    total_predictions = true_negatives + false_negatives + false_positives + true_positives
-	    accuracy = 1.0*(true_positives + true_negatives)/total_predictions
-	    precision = 1.0*true_positives/(true_positives+false_positives)
-	    recall = 1.0*true_positives/(true_positives+false_negatives)
-	    f1 = 2.0 * true_positives/(2*true_positives + false_positives+false_negatives)
-	    f2 = (1+2.0*2.0) * precision*recall/(4*precision + recall)
-	    print ""
-	    print clf
-	    print PERF_FORMAT_STRING.format(accuracy, precision, recall, f1, f2, display_precision = 5)
-	    print RESULTS_FORMAT_STRING.format(total_predictions, true_positives, false_positives, false_negatives, true_negatives)
-	    print ""
-	except:
-	    print "Got a divide by zero when trying out:", clf
-	    print "Precision or recall may be undefined due to a lack of true positive predicitons."
 
 test_classifier(clf, features, labels)
 
