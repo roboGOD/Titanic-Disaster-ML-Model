@@ -7,7 +7,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier as DTClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-from preprocess import preprocess
+from preprocess import preprocess, split_features_labels
 from visualize import visualize
 from tester import test_classifier
 
@@ -23,47 +23,50 @@ dataset = pd.read_csv('dataset/train.csv')
 
 
 ### Preprocess the data
-feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n']
-features, labels = preprocess(dataset, feature_list, test_set=False)
+dataset = preprocess(dataset)
+dataset = dataset.dropna()
 
+feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n', 'Pclass', 'SibSp', 'Parch']
+features, labels = split_features_labels(dataset, feature_list, test_set=False)
 
 ### Visualizing Data
 # visualize(dataset)
 
 
 ### Classification Model
-clf = DTClassifier(min_samples_split=27)
+clf = AdaBoostClassifier(n_estimators=27)
 
 
 ### Train-Test Split
-# X_train, X_val, y_train, y_val = \
-# 		train_test_split(features, labels, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = \
+		train_test_split(features, labels, test_size=0.2, random_state=42)
 
-# clf.fit(X_train, y_train)
-# print "Training Set Score:", clf.score(X_train, y_train)
-# print "Validation Set Score:", clf.score(X_val, y_val)
+clf.fit(X_train, y_train)
+print "Training Set Score:", clf.score(X_train, y_train)
+print "Validation Set Score:", clf.score(X_val, y_val)
 
 
 ### Cross Validation of Model
 
-#test_classifier(clf, features, labels)
+test_classifier(clf, features, labels, folds=100)
 
 
 ############################################################################
 ### Make predictions
 
-test_set = pd.read_csv('dataset/test.csv')
-test_features = preprocess(test_set, feature_list)
+# test_set = pd.read_csv('dataset/test.csv')
+# test_set = preprocess(test_set)
+# test_features = split_features_labels(test_set, feature_list)
 
-clf.fit(features, labels)
-predictions = clf.predict(test_features)
+# clf.fit(features, labels)
+# predictions = clf.predict(test_features)
 
-output_df = pd.DataFrame()
-output_df['PassengerId'] = test_set['PassengerId']
-output_df['Survived'] = pd.Series(predictions)
+# output_df = pd.DataFrame()
+# output_df['PassengerId'] = test_set['PassengerId']
+# output_df['Survived'] = pd.Series(predictions)
 
-with open('dataset/DTC_out.csv', 'w') as output_csv:
-	output_df.to_csv(output_csv, sep=',', index=False)
+# with open('dataset/Model_out.csv', 'w') as output_csv:
+# 	output_df.to_csv(output_csv, sep=',', index=False)
 
 
 
