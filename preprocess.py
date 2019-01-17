@@ -50,9 +50,13 @@ def preprocess(dataset):
 	dataset.loc[dataset['Embarked'] == 'C', "Embarked"] = 1.
 	dataset.loc[dataset['Embarked'] == 'Q', "Embarked"] = 2.
 
+
+	dataset.loc[dataset['Cabin_n'] == 'M', "Cabin_n"] = 0.0
 	ls = ['M','C','E','G','D','A','B','F','T']
 	for i,j in enumerate(ls):
-		dataset.loc[dataset['Cabin_n'] == j, "Cabin_n"] = float(i)	
+		dataset.loc[dataset['Cabin_n'] == j, "Cabin_n"] = i	
+
+	dataset['Fare'] = dataset['Fare'].fillna(0.0)
 
 	return dataset
 

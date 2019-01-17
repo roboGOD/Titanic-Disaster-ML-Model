@@ -70,8 +70,20 @@ X_train, X_val, y_train, y_val = \
 # plt.show()
 
 
+### Finding best value for n_estimators as 260
+# samp_vals = [x for x in range(150,400,10)]
+# accuracies = []
+# for i in samp_vals:
+# 	clf = AdaBoostClassifier(n_estimators=i, random_state=42)
+# 	clf.fit(X_train, y_train)
+# 	accuracies.append(clf.score(X_val, y_val))
 
-clf = DTClassifier(min_samples_split=14, max_depth=11, random_state=42)
+# plt.plot(samp_vals, accuracies, '-b')
+# plt.xlabel('n_estimators')
+# plt.ylabel('Accuracy')
+# plt.show()
+
+clf = AdaBoostClassifier(n_estimators = 260, random_state=42)
 clf_ = clf.fit(X_train, y_train)
 
 
@@ -86,25 +98,25 @@ print "Validation Set Score:", clf.score(X_val, y_val)
 
 ### Cross Validation of Model
 
-test_classifier(clf, features, labels, folds=100)
+# test_classifier(clf, features, labels, folds=100)
 
 
 ############################################################################
 ### Make predictions
 
-# test_set = pd.read_csv('dataset/test.csv')
-# test_set = preprocess(test_set)
-# test_features = split_features_labels(test_set, feature_list)
+test_set = pd.read_csv('dataset/test.csv')
+test_set = preprocess(test_set)
+test_features = split_features_labels(test_set, feature_list)
 
-# clf.fit(features, labels)
-# predictions = clf.predict(test_features)
+clf.fit(features, labels)
+predictions = clf.predict(test_features)
 
-# output_df = pd.DataFrame()
-# output_df['PassengerId'] = test_set['PassengerId']
-# output_df['Survived'] = pd.Series(predictions)
+output_df = pd.DataFrame()
+output_df['PassengerId'] = test_set['PassengerId']
+output_df['Survived'] = pd.Series(predictions)
 
-# with open('dataset/Model_out.csv', 'w') as output_csv:
-# 	output_df.to_csv(output_csv, sep=',', index=False)
+with open('dataset/Ada_out.csv', 'w') as output_csv:
+	output_df.to_csv(output_csv, sep=',', index=False)
 
 
 
