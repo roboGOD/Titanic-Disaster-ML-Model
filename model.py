@@ -1,4 +1,6 @@
 import pandas as pd 
+from matplotlib import pyplot as plt
+from matplotlib import style
 
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -11,6 +13,7 @@ from preprocess import preprocess, split_features_labels
 from visualize import visualize
 from tester import test_classifier
 
+style.use('ggplot')
 
 #######################################################################
 ### Given Columns
@@ -33,20 +36,48 @@ features, labels = split_features_labels(dataset, feature_list, test_set=False)
 # visualize(dataset)
 
 
-### Classification Model
-clf = DTClassifier(min_samples_split=23, random_state=42)
-
-
 ### Train-Test Split
 X_train, X_val, y_train, y_val = \
 		train_test_split(features, labels, test_size=0.2, random_state=42)
 
+
+### Classification Model
+
+### Finding best value for min_samples_split as 14 
+# samp_vals = [x for x in range(2,100,3)]
+# accuracies = []
+# for i in samp_vals:
+# 	clf = DTClassifier(min_samples_split=i, random_state=42)
+# 	clf.fit(X_train, y_train)
+# 	accuracies.append(clf.score(X_val, y_val))
+
+# plt.plot(samp_vals, accuracies, '-b')
+# plt.xlabel('Min. Samples Split')
+# plt.ylabel('Accuracy')
+# plt.show()
+
+### Finding best value for max_depth as 11
+# samp_vals = [x for x in range(2,100,3)]
+# accuracies = []
+# for i in samp_vals:
+# 	clf = DTClassifier(min_samples_split=14, max_depth=i, random_state=42)
+# 	clf.fit(X_train, y_train)
+# 	accuracies.append(clf.score(X_val, y_val))
+
+# plt.plot(samp_vals, accuracies, '-b')
+# plt.xlabel('Max Depth')
+# plt.ylabel('Accuracy')
+# plt.show()
+
+
+
+clf = DTClassifier(min_samples_split=14, max_depth=11, random_state=42)
 clf_ = clf.fit(X_train, y_train)
 
 
-from matplotlib import pyplot as plt
-plt.bar(feature_list, clf.feature_importances_)
-plt.show()
+
+# plt.bar(feature_list, clf.feature_importances_)
+# plt.show()
 
 
 print "Training Set Score:", clf.score(X_train, y_train)
