@@ -26,7 +26,7 @@ dataset = pd.read_csv('dataset/train.csv')
 dataset = preprocess(dataset)
 dataset = dataset.dropna()
 
-feature_list = ['Fare', 'Sex_n', 'Age', 'Embarked_n', 'Pclass', 'SibSp', 'Parch']
+feature_list = ['Fare', 'Sex', 'Age', 'Embarked', 'Pclass', 'SibSp', 'Cabin_n']
 features, labels = split_features_labels(dataset, feature_list, test_set=False)
 
 ### Visualizing Data
@@ -34,14 +34,21 @@ features, labels = split_features_labels(dataset, feature_list, test_set=False)
 
 
 ### Classification Model
-clf = AdaBoostClassifier(n_estimators=27)
+clf = DTClassifier(min_samples_split=23, random_state=42)
 
 
 ### Train-Test Split
 X_train, X_val, y_train, y_val = \
 		train_test_split(features, labels, test_size=0.2, random_state=42)
 
-clf.fit(X_train, y_train)
+clf_ = clf.fit(X_train, y_train)
+
+
+from matplotlib import pyplot as plt
+plt.bar(feature_list, clf.feature_importances_)
+plt.show()
+
+
 print "Training Set Score:", clf.score(X_train, y_train)
 print "Validation Set Score:", clf.score(X_val, y_val)
 
