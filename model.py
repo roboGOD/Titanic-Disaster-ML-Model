@@ -64,7 +64,8 @@ base_est = DTClassifier(min_samples_split=14, max_depth=11, random_state=42)
 
 # clf = RandomForestClassifier(n_estimators = 5, min_samples_split=8, max_depth=21,  random_state=42)
 # clf = KNeighborsClassifier(n_neighbors = 18, weights = 'distance', p=1)
-clf = AdaBoostClassifier(base_estimator=base_est, n_estimators=20, random_state=42)
+# clf = AdaBoostClassifier(base_estimator=base_est, n_estimators=20, random_state=42)
+clf = GaussianNB()
 clf_ = clf.fit(X_train, y_train)
 
 
@@ -85,21 +86,21 @@ test_classifier(clf, features, labels, folds=100)
 ############################################################################
 ### Make predictions
 
-# test_set = pd.read_csv('dataset/test.csv')
-# test_set = preprocess(test_set)
-# test_features = split_features_labels(test_set, feature_list)
+test_set = pd.read_csv('dataset/test.csv')
+test_set = preprocess(test_set)
+test_features = split_features_labels(test_set, feature_list)
 
-# clf.fit(features, labels)
-# predictions = clf.predict(test_features)
+clf.fit(features, labels)
+predictions = clf.predict(test_features)
 
-# output_df = pd.DataFrame()
-# output_df['PassengerId'] = test_set['PassengerId']
-# output_df['Survived'] = pd.Series(predictions)
+output_df = pd.DataFrame()
+output_df['PassengerId'] = test_set['PassengerId']
+output_df['Survived'] = pd.Series(predictions)
 
-# with open('dataset/_out.csv', 'w') as output_csv:
-# 	output_df.to_csv(output_csv, sep=',', index=False)
+with open('dataset/NB_out.csv', 'w') as output_csv:
+	output_df.to_csv(output_csv, sep=',', index=False)
 
-# print "Done!"
+print "Done!"
 
 
 
