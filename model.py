@@ -47,25 +47,41 @@ X_train, X_val, y_train, y_val = \
 
 base_est = DTClassifier(min_samples_split=14, max_depth=11, random_state=42)
 
-######################## AdaBoost ###############################
-### Finding best value for n_estimators as 19
-# samp_vals = [x for x in range(2,30,1)]
+######################## SVC ###############################
+### Finding best value for C as 6.5
+# samp_vals = [6+x*0.1 for x in range(1,40)]
 # accuracies = []
 # for i in samp_vals:
-# 	clf = AdaBoostClassifier(base_estimator=base_est, n_estimators=i, random_state=42)
+# 	clf = SVC(C=i, random_state=42)
 # 	clf.fit(X_train, y_train)
 # 	accuracies.append(clf.score(X_val, y_val))
 
 # plt.plot(samp_vals, accuracies, '-b')
-# plt.xlabel('n_estimators')
+# plt.xlabel('C')
 # plt.ylabel('Accuracy')
 # plt.show()
+
+### Finding best value for gamma as 0.0023
+# samp_vals = [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0]
+# samp_vals = [x*0.0001 for x in range(1,100)]
+# accuracies = []
+# for i in samp_vals:
+# 	clf = SVC(C=6.5, gamma=i, random_state=42)
+# 	clf.fit(X_train, y_train)
+# 	accuracies.append(clf.score(X_val, y_val))
+
+# plt.plot(samp_vals, accuracies, '-b')
+# plt.xlabel('gamma')
+# plt.ylabel('Accuracy')
+# plt.show()
+
 
 
 # clf = RandomForestClassifier(n_estimators = 5, min_samples_split=8, max_depth=21,  random_state=42)
 # clf = KNeighborsClassifier(n_neighbors = 18, weights = 'distance', p=1)
 # clf = AdaBoostClassifier(base_estimator=base_est, n_estimators=20, random_state=42)
-clf = GaussianNB()
+# clf = GaussianNB()
+clf = SVC(C=6.5, gamma=0.0023, random_state=42)
 clf_ = clf.fit(X_train, y_train)
 
 
@@ -97,7 +113,7 @@ output_df = pd.DataFrame()
 output_df['PassengerId'] = test_set['PassengerId']
 output_df['Survived'] = pd.Series(predictions)
 
-with open('dataset/NB_out.csv', 'w') as output_csv:
+with open('dataset/_out.csv', 'w') as output_csv:
 	output_df.to_csv(output_csv, sep=',', index=False)
 
 print "Done!"
