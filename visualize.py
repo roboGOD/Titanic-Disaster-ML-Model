@@ -8,16 +8,11 @@ def visualize(dataset):
 
 	style.use('ggplot')
 
-
 	# plt.scatter(surv_data['Fare'].values, surv_data['Age'].values, label='Survived', color='g')
 	# plt.scatter(died_data['Fare'].values, died_data['Age'].values, label='Died', color='r')
 
-
-
 	# plt.hist(surv_data['Fare'], label='Survived', color='g')
 	# plt.hist(died_data['Fare'], label='Died', color='r')
-
-
 
 	plt.subplot(1,2,1)
 	plt.hist(surv_data['Age'], label='Survived', color='g')
