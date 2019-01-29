@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib import style
 
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -48,31 +49,43 @@ X_train, X_val, y_train, y_val = \
 ### Classification Model
 # clf = KNeighborsClassifier(n_neighbors = 18, weights = 'distance', p=1)
 # clf = LogisticRegression(C=0.045, solver='lbfgs', random_state=42)
-clf = RandomForestClassifier(n_estimators = 100,  random_state=42)
-clf_ = clf.fit(X_train, y_train)
 
+### After Tuning Random Forest:
+### 'n_estimators': 5, 'min_samples_split': 18, 'max_depth': 8
+
+param_list = {'n_estimators':[x for x in range(5,100,10)],
+			'min_samples_split':[x for x in range(2,30,2)],
+			'max_depth':[x for x in range(2,30,2)]
+			}
+
+rfc = RandomForestClassifier(random_state=42)
+clf = GridSearchCV(rfc, param_list, cv=5)
+clf_ = clf.fit(features, labels)
+print clf.best_score_
+print clf.best_estimator_
 
 print "Training Set Score:", clf.score(X_train, y_train)
 print "Validation Set Score:", clf.score(X_val, y_val)
 
 ### Cross Validation of Model
-test_classifier(clf, features, labels, folds=100)
+test_classifier(clf.best_estimator_, features, labels, folds=100)
 
 ############################################################################
 ### Make predictions
 
-# test_features = scl.fit_transform(df_test.drop(['Survived', 'PassengerId'], axis=1).values)
+test_features = scl.fit_transform(df_test.drop(['Survived', 'PassengerId'], axis=1).values)
 
-# clf.fit(features, labels)
-# predictions = clf.predict(test_features)
+clf.best_estimator_.fit(features, labels)
+predictions = clf.best_estimator_.predict(test_features)
 
-# output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
-# 						  'Survived':pd.Series(predictions)})
+output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
+						  'Survived':pd.Series(predictions)})
+output_df = output_df.astype('Int64')
 
-# with open('dataset/_out.csv', 'w') as output_csv:
-# 	output_df.to_csv(output_csv, sep=',', index=False)
+with open('dataset/RFCTuned_out.csv', 'w') as output_csv:
+	output_df.to_csv(output_csv, sep=',', index=False)
 
-# print "Done!"
+print "Done!"
 
 
 
