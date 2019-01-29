@@ -47,17 +47,16 @@ X_train, X_val, y_train, y_val = \
 		train_test_split(features, labels, test_size=0.2, random_state=42)
 
 ### Classification Model
-# clf = KNeighborsClassifier(n_neighbors = 18, weights = 'distance', p=1)
+### After Tuning KNN:
+### 'weights': 'uniform', 'algorithm': 'ball_tree', 'n_neightbors':17
 
-### After Tuning Random Forest:
-### 'n_estimators': 5, 'min_samples_split': 18, 'max_depth': 8
-
-param_list = {'C':[0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
-			'solver':['newton-cg', 'lbfgs', 'liblinear']
+param_list = {'n_neighbors':[x for x in range(3,40)],
+				'algorithm':['auto', 'ball_tree', 'kd_tree','brute'],
+				'weights':['uniform', 'distance']
 			}
 
-lr = LogisticRegression(random_state=42)
-clf = GridSearchCV(lr, param_list, cv=5)
+knn = KNeighborsClassifier()
+clf = GridSearchCV(knn, param_list, cv=5)
 clf_ = clf.fit(features, labels)
 print clf.best_score_
 print clf.best_estimator_
@@ -80,7 +79,7 @@ output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
 						  'Survived':pd.Series(predictions)})
 output_df = output_df.astype('Int64')
 
-with open('dataset/LRTuned_out.csv', 'w') as output_csv:
+with open('dataset/KNNTuned_out.csv', 'w') as output_csv:
 	output_df.to_csv(output_csv, sep=',', index=False)
 
 print "Done!"
