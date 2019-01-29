@@ -48,18 +48,16 @@ X_train, X_val, y_train, y_val = \
 
 ### Classification Model
 # clf = KNeighborsClassifier(n_neighbors = 18, weights = 'distance', p=1)
-# clf = LogisticRegression(C=0.045, solver='lbfgs', random_state=42)
 
 ### After Tuning Random Forest:
 ### 'n_estimators': 5, 'min_samples_split': 18, 'max_depth': 8
 
-param_list = {'n_estimators':[x for x in range(5,100,10)],
-			'min_samples_split':[x for x in range(2,30,2)],
-			'max_depth':[x for x in range(2,30,2)]
+param_list = {'C':[0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+			'solver':['newton-cg', 'lbfgs', 'liblinear']
 			}
 
-rfc = RandomForestClassifier(random_state=42)
-clf = GridSearchCV(rfc, param_list, cv=5)
+lr = LogisticRegression(random_state=42)
+clf = GridSearchCV(lr, param_list, cv=5)
 clf_ = clf.fit(features, labels)
 print clf.best_score_
 print clf.best_estimator_
@@ -82,7 +80,7 @@ output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
 						  'Survived':pd.Series(predictions)})
 output_df = output_df.astype('Int64')
 
-with open('dataset/RFCTuned_out.csv', 'w') as output_csv:
+with open('dataset/LRTuned_out.csv', 'w') as output_csv:
 	output_df.to_csv(output_csv, sep=',', index=False)
 
 print "Done!"
