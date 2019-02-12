@@ -16,14 +16,14 @@ def preprocess(dataset):
 	# print dataset.info()
 
 
-	### Preprocessing 'Cabin' Column
-	# dataset['Cabin'] = dataset['Cabin'].fillna('Unknown')
-	# dataset['Cabin_Code'] = le.fit_transform(dataset['Cabin'].apply(lambda x: x[0]))
+	## Preprocessing 'Cabin' Column
+	dataset['Cabin'] = dataset['Cabin'].fillna('Unknown')
+	dataset['Cabin_Code'] = le.fit_transform(dataset['Cabin'].apply(lambda x: x[0]))
 
 
 	### Preprocessing 'Embarked' Column
-	# dataset['Embarked'] = dataset['Embarked'].fillna(dataset['Embarked'].mode().values[0])
-	# dataset['Embarked_Code'] = le.fit_transform(dataset['Embarked'])
+	dataset['Embarked'] = dataset['Embarked'].fillna(dataset['Embarked'].mode().values[0])
+	dataset['Embarked_Code'] = le.fit_transform(dataset['Embarked'])
 
 
 	### Preprocessing 'Sex' Column
@@ -42,6 +42,8 @@ def preprocess(dataset):
 
 	dataset['Title'] = dataset['Title'].map(mapTitles)
 	# print dataset.Title.value_counts()
+	dataset['Title_Code'] = le.fit_transform(dataset['Title'])
+	
 	dataset['Age'] = dataset.groupby('Title')['Age'].apply(lambda x: x.fillna(x.median()))
 	dataset['AgeBin'] = pd.qcut(dataset['Age'], 4)
 	dataset['AgeBin_Code'] = le.fit_transform(dataset['AgeBin'])

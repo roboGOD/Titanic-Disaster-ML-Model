@@ -9,6 +9,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
+
 from preprocess import preprocess
 from tester import test_classifier
 # from visualize import visualize
@@ -70,19 +71,19 @@ test_classifier(clf.best_estimator_, features, labels, folds=100)
 ############################################################################
 ### Make predictions
 
-test_features = scl.fit_transform(df_test.drop(['Survived', 'PassengerId'], axis=1).values)
+# test_features = scl.fit_transform(df_test.drop(['Survived', 'PassengerId'], axis=1).values)
 
-clf.best_estimator_.fit(features, labels)
-predictions = clf.best_estimator_.predict(test_features)
+# clf.best_estimator_.fit(features, labels)
+# predictions = clf.best_estimator_.predict(test_features)
 
-output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
-						  'Survived':pd.Series(predictions)})
-output_df = output_df.astype('Int64')
+# output_df = pd.DataFrame({'PassengerId':df_test['PassengerId'],
+# 						  'Survived':pd.Series(predictions)})
+# output_df = output_df.astype('Int64')
 
-with open('dataset/KNNTuned_out.csv', 'w') as output_csv:
-	output_df.to_csv(output_csv, sep=',', index=False)
+# with open('dataset/_out.csv', 'w') as output_csv:
+# 	output_df.to_csv(output_csv, sep=',', index=False)
 
-print "Done!"
+# print "Done!"
 
 
 
