@@ -37,8 +37,8 @@ def preprocess(dataset):
 	
 	## Generalize the titles 
 	mapTitles = {'Mr':'Mr', 'Mrs':'Mrs', 'Miss':'Miss', 'Master':'Master', 'Don':'Mr', 
-	'Rev':'Mrw', 'Dr':'Mrw', 'Mme':'Mrs', 'Ms':'Miss', 'Major':'Mrw', 'Lady':'Mrs', 'Sir':'Mr', 
-	'Mlle':'Miss', 'Col':'Mrw', 'Capt':'Mrw', 'the Countess':'Mrs', 'Jonkheer':'Mr', 'Dona':'Mrs'}
+	'Rev':'Rev', 'Dr':'Dr', 'Mme':'Mrs', 'Ms':'Miss', 'Major':'Major', 'Lady':'Mrs', 'Sir':'Mr', 
+	'Mlle':'Miss', 'Col':'Col', 'Capt':'Mr', 'the Countess':'Mrs', 'Jonkheer':'Mr', 'Dona':'Mrs'}
 
 	dataset['Title'] = dataset['Title'].map(mapTitles)
 	# print dataset.Title.value_counts()
