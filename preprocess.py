@@ -44,7 +44,7 @@ def preprocess(dataset):
 	# print dataset.Title.value_counts()
 	dataset['Title_Code'] = le.fit_transform(dataset['Title'])
 	
-	dataset['Age'] = dataset.groupby('Title')['Age'].apply(lambda x: x.fillna(x.median()))
+	dataset['Age'] = dataset.groupby(['Title', 'Pclass'])['Age'].apply(lambda x: x.fillna(x.median()))
 	dataset['AgeBin'] = pd.qcut(dataset['Age'], 4)
 	dataset['AgeBin_Code'] = le.fit_transform(dataset['AgeBin'])
 
