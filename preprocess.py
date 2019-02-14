@@ -57,9 +57,14 @@ def preprocess(dataset):
 	### Creating 'FamilySize' Feature
 	dataset['FamilySize'] = dataset['SibSp'] + dataset['Parch'] + 1
 
+	### Preprocessing 'Ticket' Column
+	tCol = dataset['Ticket'].apply(lambda x: x.replace(".", "").replace("/", "").strip().split(" ")[0])
+	dataset['TicketPrefix'] = tCol.apply(lambda x: "X" if x.isdigit() else x)
+	dataset['TPrefix_Code'] = le.fit_transform(dataset['TicketPrefix'])
+
 	### Drop unnecessary Columns
 	columns_drop = ['Age', 'AgeBin', 'Fare', 'FareBin', 'SibSp', 'Parch', 'Title',
-	 'Sex', 'Cabin', 'Embarked', 'Name', 'Ticket']
+	 'Sex', 'Cabin', 'Embarked', 'Name', 'Ticket', 'TicketPrefix']
 	dataset = dataset.drop(columns_drop, axis=1)
 	
 	return dataset.astype('float64')

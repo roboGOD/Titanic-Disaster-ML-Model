@@ -23,7 +23,7 @@ PassengerId, Pclass, Name, Sex, Age, SibSp, Parch, Ticket, Fare, Cabin, Embarked
 
 ### Engineered Columns
 '''
-AgeBin_Code, FareBin_Code, Embarked_Code, Sex_Code, FamilySize, Cabin_Code 
+AgeBin_Code, FareBin_Code, Embarked_Code, Sex_Code, FamilySize, Cabin_Code, TPrefix_Code
 '''
 
 ### Loading the datasets
