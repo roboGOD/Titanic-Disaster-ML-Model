@@ -19,11 +19,13 @@ def preprocess(dataset):
 	## Preprocessing 'Cabin' Column
 	dataset['Cabin'] = dataset['Cabin'].fillna('Unknown')
 	dataset['Cabin_Code'] = le.fit_transform(dataset['Cabin'].apply(lambda x: x[0]))
+	dataset = pd.get_dummies(dataset, columns=['Cabin_Code'], prefix="Cabin")
 
 
 	### Preprocessing 'Embarked' Column
 	dataset['Embarked'] = dataset['Embarked'].fillna(dataset['Embarked'].mode().values[0])
 	dataset['Embarked_Code'] = le.fit_transform(dataset['Embarked'])
+	dataset = pd.get_dummies(dataset, columns=['Embarked_Code'], prefix="Em")
 
 
 	### Preprocessing 'Sex' Column
@@ -43,11 +45,11 @@ def preprocess(dataset):
 	dataset['Title'] = dataset['Title'].map(mapTitles)
 	# print dataset.Title.value_counts()
 	dataset['Title_Code'] = le.fit_transform(dataset['Title'])
+	dataset = pd.get_dummies(dataset, columns=['Title_Code'], prefix="Title")
 	
 	dataset['Age'] = dataset.groupby(['Title', 'Pclass'])['Age'].apply(lambda x: x.fillna(x.median()))
 	dataset['AgeBin'] = pd.qcut(dataset['Age'], 4)
 	dataset['AgeBin_Code'] = le.fit_transform(dataset['AgeBin'])
-
 
 	### Preprocessing 'Fare' Column
 	dataset['Fare'] = dataset['Fare'].fillna(dataset['Fare'].median())
@@ -56,15 +58,21 @@ def preprocess(dataset):
 
 	### Creating 'FamilySize' Feature
 	dataset['FamilySize'] = dataset['SibSp'] + dataset['Parch'] + 1
+	dataset['Single'] = dataset['FamilySize'].apply(lambda x: 1 if x == 1 else 0)
+	dataset['SmallFam'] = dataset['FamilySize'].apply(lambda x: 1 if x == 2 else 0)
+	dataset['MedFam'] = dataset['FamilySize'].apply(lambda x: 1 if (x == 3 or x == 4) else 0)
+	dataset['BigFam'] = dataset['FamilySize'].apply(lambda x: 1 if x >= 5 else 0)
+
 
 	### Preprocessing 'Ticket' Column
 	tCol = dataset['Ticket'].apply(lambda x: x.replace(".", "").replace("/", "").strip().split(" ")[0])
 	dataset['TicketPrefix'] = tCol.apply(lambda x: "X" if x.isdigit() else x)
 	dataset['TPrefix_Code'] = le.fit_transform(dataset['TicketPrefix'])
+	dataset = pd.get_dummies(dataset, columns=['TPrefix_Code'], prefix="TPre")
 
 	### Drop unnecessary Columns
 	columns_drop = ['Age', 'AgeBin', 'Fare', 'FareBin', 'SibSp', 'Parch', 'Title',
-	 'Sex', 'Cabin', 'Embarked', 'Name', 'Ticket', 'TicketPrefix']
+	 'Sex', 'Cabin', 'Embarked', 'Name', 'Ticket', 'TicketPrefix', 'FamilySize']
 	dataset = dataset.drop(columns_drop, axis=1)
 	
 	return dataset.astype('float64')
